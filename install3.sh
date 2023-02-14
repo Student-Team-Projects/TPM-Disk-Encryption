@@ -10,8 +10,8 @@ then
 	sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g" /etc/sudoers
 	usermod -aG wheel ${user_name}
 
-	chmod 777 details/makepkgs.sh
-	su -c ./details/makepkgs.sh ${user_name}
+	chmod 777 support_scripts/makepkgs.sh
+	su -c ./support_scripts/makepkgs.sh ${user_name}
 
 	cp -r etc/* /etc/
 	echo "DONE" > /root/tpm.log

@@ -54,4 +54,4 @@ echo "generating an fstab file"
 genfstab -U /mnt >> /mnt/etc/fstab
 
 echo "Entering new system chroot"
-arch-chroot ./details/after_chroot.sh /mnt
+arch-chroot ./support_scripts/after_chroot.sh /mnt
