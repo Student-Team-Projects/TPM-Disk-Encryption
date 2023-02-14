@@ -507,9 +507,9 @@ tcsd
 tpm_takeownership -z
 ```
 
-### Add a new key file to LUKS
+### Add a new keyfile to LUKS
 
-#### Create a new key file and change it's permissions
+#### Create a new keyfile and change it's permissions
 
 ```
 dd bs=1 count=256 if=/dev/urandom of=/etc/tpm-secret/secret_key.bin
@@ -536,7 +536,7 @@ sed -i "s|^MODULES=.*|MODULES=(quota_v2 quota_tree tpm tpm_tis)|g" /etc/mkinitcp
 sed -i "s|^HOOKS=.*|HOOKS=(base systemd autodetect modconf kms keyboard sd-vconsole block tpm sd-encrypt lvm2 filesystems fsck)|g" /etc/mkinitcpio.conf
 ```
 
-### Add LUKS partition UUID and path to key file to ```/etc/crypttab.initramfs```
+### Add LUKS partition UUID and path to keyfile to ```/etc/crypttab.initramfs```
 
 ```
 BLKID=$(blkid | grep sda4 | cut -d '"' -f 2)
@@ -555,7 +555,7 @@ cp /boot/initramfs-linux-lts.img /boot/initramfs-linux-lts.img.orig
 mkinitcpio -P
 ```
 
-### Store the key file in TPM without sealing it with PCRs
+### Store the keyfile in TPM without sealing it with PCRs
 
 ```
 /etc/tpm-secret/tpm_storesecret.sh --no-seal
@@ -567,9 +567,9 @@ If everything works you shouldn't be asked to enter LUKS password after reboot.
 
 In case something went wrong within this process, or if there was a kernel update and your system won't read the contents of the NVRAM because the kernel-checksum has changed and systemd does not even ask for the LUKS passphrase on console: then press E in the GRUB boot menu, append an ".orig" on the line were the initrd is specified. Now press F10 to boot. This allows you to boot the “normal” way, by providing a LUKS passphrase.
 
-### Store the key file with sealing
+### Store the keyfile with sealing
 
-After the reboot the PCR values are updated according to the new initramfs image. Now we can use them to seal the key file.
+After the reboot the PCR values are updated according to the new initramfs image. Now we can use them to seal the keyfile.
 
 ```
 /etc/tpm-secret/tpm_storesecret.sh
