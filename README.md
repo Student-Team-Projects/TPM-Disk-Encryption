@@ -44,13 +44,13 @@ iwctl station <interface> connect <ssid> --passphrase <passphrase>
 ```
 ./install1.sh
 ```
-You will be asked to confirm disk erasure and prompted to enter new password to encrypted disk three times (it will later serve as boot password)
+You will be asked to confirm disk erasure and prompted to enter new password to encrypted disk three times. It will later serve as boot password (it may be permanent one, however, better option could be to use simple one for the time of this installation and later supply better password for the container, simply to avoid typing safe passphase - obviously then weak password should be removed afterwards).
 
 You will be asked to set root password and later to input encryption passphrase.
 
 #### After rebooting
 
-You will be asked to login using root password
+You will be asked to login using root password. The scripts will be present in /root/scripts. Enter this directory.
 
 #### Set up DHCP
 
@@ -75,10 +75,6 @@ You should never use the same UEFI firmware supervisor password as your encrypti
 
 ## Details
 
-### Signing
-
-### TPM
-
 Any command executed during boot process, BIOS configuration, code of the kernel and bootloader and various other factors contribute to final value of PCRs (Platform Configuration Registers) - more information can be found [here](https://ebrary.net/24779/computer_science/platform_configuration_registers). Realistically there is no feasible way of achieving same set of values of these registers if boot process was somehow altered.
 
 TPM provides the mechanism for storing data in its NVRAM, and (if asked to) sealing it with set of current values of PCRs. After sealing, TPM will release its data only if current PCRs set matches the set at the moment of sealing.
@@ -97,7 +93,7 @@ If process of retrieval fails, then user is prompted to input password to LUKS m
 
 ## Kernel update
 
-After any intended changes to kernel or bootloader run `tpm_storesecret --no-seal` to allow TPM to release LUKS key without checking the PCRs (as they are going to be different at next boot). After reboot, run `tpm_storesecret` to seal the key to new boot sequence (there is need to do this, because system has to determine values of PCRs after changes before being able to seal with them). It can be improved to one reboot e.g. if we seal with new values of PCRs just after retrieving the key (TODO?).
+After any intended changes to kernel or bootloader run `tpm_storesecret --no-seal` to allow TPM to release LUKS key without checking the PCRs (as they are going to be different at next boot). After reboot, run `tpm_storesecret` to seal the key to new boot sequence (there is need to do this, because system has to determine values of PCRs after changes before being able to seal with them). It can be improved to one reboot e.g. if we seal with new values of PCRs just after retrieving the key.
 
 ## Datailed guide
 
@@ -260,16 +256,15 @@ arch-chroot /mnt
 
 #### At this point you should have the following partitions and logical volumes:
 
-TODO
-
 ```lsblk```
 
 NAME           | MAJ:MIN | RM  |  SIZE  | RO  | TYPE  | MOUNTPOINT |
 ---------------|---------|-----|--------|-----|-------|------------|
 sda            |  259:0  |  0  | 465.8G |  0  | disk  |            |
-├─sda1         |  259:4  |  0  |     1M |  0  | part  |            |
+├─sda1         |  259:4  |  0  |     2M |  0  | part  |            |
 ├─sda2         |  259:5  |  0  |   550M |  0  | part  | /efi       |
-├─sda3         |  259:6  |  0  | 465.2G |  0  | part  |            |
+├─sda3         |  259:5  |  0  |   550M |  0  | part  | /boot      |
+├─sda4         |  259:6  |  0  | 465.2G |  0  | part  |            |
 ..└─cryptlvm   |  254:0  |  0  | 465.2G |  0  | crypt |            |
 ....├─vg-swap  |  254:1  |  0  |     8G |  0  | lvm   | [SWAP]     |
 ....├─vg-root  |  254:2  |  0  |    32G |  0  | lvm   | /          |
@@ -409,7 +404,7 @@ exit
 reboot
 ```
 
-You will be asked to enter LUKS passphrase. (TODO ??? is it correct?)
+You will be asked to enter LUKS passphrase (it is the only instance of that during whole installation process).
 
 ### Post-installation
 
@@ -434,9 +429,9 @@ pacman -S git
 ### Create new user for building AUR packages and add him to wheel
 
 ```
-useradd -m user
-passwd user
-usermod -aG wheel user
+useradd -m <user_name>
+passwd <user_name>
+usermod -aG wheel <user_name>
 ```
 
 ### Uncomment ```%wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL``` in ```/etc/sudoers```
@@ -560,6 +555,11 @@ mkinitcpio -P
 ```
 /etc/tpm-secret/tpm_storesecret.sh --no-seal
 ```
+### Create a softlink for convenient update process
+
+```
+ln -s /etc/tpm-secret/tpm_storesecret.sh /bin/tpm_storesecret
+```
 
 ### Reboot
 
@@ -572,13 +572,7 @@ In case something went wrong within this process, or if there was a kernel updat
 After the reboot the PCR values are updated according to the new initramfs image. Now we can use them to seal the keyfile.
 
 ```
-/etc/tpm-secret/tpm_storesecret.sh
-```
-
-### Create a softlink for convenient update process
-
-```
-ln -s /etc/tpm-secret/tpm_storesecret.sh /bin/tpm_storesecret
+tpm_storesecret.sh
 ```
 
 ## References

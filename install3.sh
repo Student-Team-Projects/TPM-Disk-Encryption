@@ -1,5 +1,4 @@
 echo "Make sure you are connected to the internet"
-echo "" > /root/tpm.log
 if [[ $(cat /root/tpm.log) != "DONE" ]]
 then
 	echo "Installing base-devel and git packages"
@@ -15,7 +14,7 @@ then
 
 	chmod 777 support_scripts/makepkgs.sh
 	echo "Running makepkgs.sh script as the new user"
-	su -c ./support_scripts/makepkgs.sh ${user_name}
+	sudo -u ${user_name} ./support_scripts/makepkgs.sh
 
 	echo "Copying etc directory from repository"
 	cp -r etc/* /etc/
@@ -28,7 +27,7 @@ then
 	exit 1
 fi
 
-if [[ $(cat /sys/class/tpm/tpm0/enable) != "1" ]]
+if [[ $(cat /sys/class/tpm/tpm0/enabled) != "1" ]]
 then
 	echo "Enable TPM then restart this script"
 	exit 1
@@ -36,11 +35,6 @@ fi
 
 echo "Running tcsd"
 tcsd
-if [[ $? -ne 0 ]]
-then
-	echo "Check if installation of packages was succesful then restart this script"
-	exit 1
-fi
 echo "Setup password for TPM"
 tpm_takeownership -z
 

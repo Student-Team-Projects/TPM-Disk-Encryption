@@ -53,5 +53,12 @@ pacstrap /mnt base linux linux-firmware mkinitcpio lvm2 vi dhcpcd wpa_supplicant
 echo "generating an fstab file"
 genfstab -U /mnt >> /mnt/etc/fstab
 
+echo "copying scripts to new root"
+mkdir /mnt/root/scripts
+cp -r * /mnt/root/scripts
+
 echo "Entering new system chroot"
-arch-chroot ./support_scripts/after_chroot.sh /mnt
+arch-chroot /mnt /root/support_scripts/after_chroot.sh
+
+echo "Reboot"
+reboot

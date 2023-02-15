@@ -1,6 +1,8 @@
 #!/bin/sh
 # /bin/sh works for both ash and bash
 
+tcsd
+
 . /etc/tpm-secret/secret.conf
 
 # Read the content of NVRAM

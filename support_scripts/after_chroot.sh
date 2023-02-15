@@ -39,6 +39,4 @@ pacman -S intel-ucode
 echo "Generating GRUB configuration file"
 grub-mkconfig -o /boot/grub/grub.cfg
 
-echo "Reboot"
 chmod 700 /boot
-reboot

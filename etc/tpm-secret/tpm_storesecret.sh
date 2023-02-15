@@ -1,5 +1,7 @@
 #!/bin/bash
 
+tcsd
+
 if [ $(whoami) != "root" ]; then
   echo "$0 must be run as root!"
   exit -1
