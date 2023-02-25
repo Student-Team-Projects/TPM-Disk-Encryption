@@ -50,7 +50,7 @@ You will be asked to set root password and later to input encryption passphrase.
 
 #### After rebooting
 
-You will be asked to login using root password. The scripts will be present in /root/scripts. Enter this directory.
+You will be asked to enter LUKS passphrase and login using root password. The scripts will be present in /root/scripts. Enter this directory.
 
 #### Set up DHCP
 
@@ -66,6 +66,19 @@ You will be asked to login using root password. The scripts will be present in /
 ./install3.sh
 ```
 You will be asked to enter username and password for user building AUR packages. Later you will be asked to set TPM password and enter it a few times.
+
+Now you have to reboot system and after it run
+
+```
+tpm_storesecret
+```
+
+In the following reboots you will not need to enter LUKS passphare. You should change it to more complex one with
+
+```
+cryptsetup luksChangeKey /dev/sda4
+
+```
 
 #### Unplug your arch-iso stick
 
