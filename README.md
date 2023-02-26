@@ -417,7 +417,7 @@ exit
 reboot
 ```
 
-You will be asked to enter LUKS passphrase (it is the only instance of that during whole installation process).
+You will be asked to enter LUKS passphrase.
 
 ### Post-installation
 

@@ -58,7 +58,7 @@ mkdir /mnt/root/scripts
 cp -r * /mnt/root/scripts
 
 echo "Entering new system chroot"
-arch-chroot /mnt /root/support_scripts/after_chroot.sh
+arch-chroot /mnt /root/scripts/support_scripts/after_chroot.sh
 
 echo "Reboot"
 reboot
